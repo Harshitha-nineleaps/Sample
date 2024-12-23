@@ -3,6 +3,7 @@ from datetime import datetime
 import re
 from student import *
 import pandas
+import csv
 
 def specialCharacterCheck(field,value):
     if not value.replace(" ","").isalpha():
@@ -26,7 +27,7 @@ def addressLength(address):
         print("Address must have more than 20 characters")
         return True
 def selectQuery(table_name,field_name,field_value,cursor):
-    sql=f'Select 1 from {table_name} where {field_name} = %s and soft_delete=0'
+    sql=f'Select 1 from {table_name} where {field_name} = %s'
     try:
         cursor.execute(sql,(field_value,))
         result=cursor.fetchone()
@@ -36,6 +37,18 @@ def selectQuery(table_name,field_name,field_value,cursor):
        print(f"Entered {field_name} do not exist")
        return True
     
+def displayName(sql,cursor):
+    try:
+        cursor.execute(sql)
+        result=cursor.fetchall()
+        if result:
+            headers=[i[0] for i in cursor.description]
+            print(pandas.DataFrame(result,columns=headers))
+        else:
+            print("No records found 🧐")
+    except Exception as e:
+           print(f'An Exception occured: {e}')
+
 
 cursor=conn.cursor()
         
@@ -124,24 +137,14 @@ def update_student_info(student_id, field , value):
 
 
 def studentDetails():
-
-    try:
-        sql=f"Select * from students where soft_delete=0"
-        cursor.execute(sql)
-        result=cursor.fetchall()
-        if result:
-            headers=[i[0] for i in cursor.description]
-            print(pandas.DataFrame(result,columns=headers))
-        else:
-            print("No records found 🧐")
-    except Exception as e:
-        print(f'An Exception occured: {e}')
+    sql=f"Select * from students where soft_delete=0"
+    displayName(sql,cursor)
        
         
 def studentFilter(filter_values):
 
     try:
-        sql="Select * from students where 1"
+        sql="Select * from students where 1 "
         for key,value in filter_values.items():
             sql+=f"and {key}='{value}'"
         cursor.execute(sql)
@@ -169,7 +172,7 @@ def currentCourse(student_id):
 def softDelete(student_id):
     try:
         if(selectQuery("students","student_id",student_id,cursor)):return
-        sql=f"Update students set soft_delete=true where student_id=1"
+        sql=f"Update students set soft_delete=true where student_id={student_id}"
         print(sql)
         cursor.execute(sql)
         conn.commit()
@@ -191,6 +194,43 @@ def pastCourse(student_id):
             print(f"Past course of student is {result[0]} , Student has not changed the course")
     except:
         print('Given student_id do not exist')
+
+
+def searchStudentName(student_name):
+
+    sql=f"Select * from students where name='{student_name}' and soft_delete=0"
+    displayName(sql,cursor)
+    
+
+def exportToCsv():
+    try:
+        sql="Select * from students"
+        cursor.execute(sql)
+        rows=cursor.fetchall()
+        column_headers=[i[0] for i in cursor.description]
+        with open('student_data.csv', mode='w') as file:
+            for row in rows:
+                writer = csv.writer(file)
+                writer.writerow(column_headers)  
+                writer.writerow(row)
+        print("Data has been exported to 'student_data.csv' successfully.")
+
+    except Exception as e:
+        print(f"An error occured:{e}")
+
+
+def importfromCsv():
+    try:
+        with open('student_data.csv', mode='r') as file:
+            reader = csv.reader(file)   
+            for row in reader:
+                print(row)
+    except Exception as e:
+        print(f"An error occured: {e}")
+
+
+
+
 
 
 

@@ -33,7 +33,7 @@ def addTeacher(name, gender, address, mobile_number, course_names,date_of_joinin
             print(f"An error occuredd: {e}")
         break
     try:
-        courses = ",".join(f'"{item}"' for item in courses)
+        courses = ",".join(f'{item}' for item in courses)
         past_course=courses
         sql = "INSERT INTO teacher (name, gender, address, mobile_number, course_name, past_course,date_of_joining) VALUES (%s, %s, %s, %s, %s, %s,%s)"
         values = (name, gender,  address, mobile_number,courses,past_course,date_of_joining)
@@ -46,18 +46,8 @@ def addTeacher(name, gender, address, mobile_number, course_names,date_of_joinin
 
 
 def teacherDetails():
-
-    try:
         sql="Select * from teacher where soft_delete=0"
-        cursor.execute(sql)
-        result=cursor.fetchall()
-        if result:
-            headers=[i[0] for i in cursor.description]
-            print(pandas.DataFrame(result,columns=headers))
-        else:
-            print("No records found 🧐")
-    except Exception as e:
-        print(f'An Exception occured: {e}')
+        displayName(sql,cursor)
     
 
 
@@ -124,6 +114,54 @@ def teacherPastCourse(teacher_id):
     except:
         print('Given teacher_id do not exist')
 
+
+
+def updateTeacherInfo(teacher_id, field , value):
+
+    if selectQuery("teacher","teacher_id",teacher_id,cursor):return
+
+    if field=="mobile_number":
+        mobile_number = mobileNumberCheck('+91'+value)
+        if(mobile_number is True): return
+        value=mobile_number
+
+    if field=="course_name":
+        while(True):
+            courses=[]
+            counter=0
+            for item in value.split(','):
+                counter+=1
+                courses.append(str(item.strip()))
+            if counter<2: 
+                print("Must have atleast 2 courses")
+                value=input("Please re-enter courses: ")
+                continue
+            try:
+                sql=f"Select count(*) from Courses where 0 "
+                for item in courses:
+                    sql+=f"or course_name='{item}' "
+                cursor.execute(sql)
+                result=cursor.fetchone()
+                if(result[0]!=counter):
+                    print("One of the course you have entered doesn't exist ")
+                    value=input("Please re-enter courses: ")
+                    continue
+                break
+            except Exception as e:
+                print(f"An error occured: {e}")
+                break
+    try:
+        sql=f"Update teacher set {field}='{value}' where teacher_id={teacher_id}"
+        cursor.execute(sql)
+        conn.commit()
+        print("Update Successfull 🙌")
+    except Exception as e:
+        print(f'An Exception occured: {e}')
+
+
+def searchTeacherName(teacher_name):
+    sql=f"Select * from teacher where name='{teacher_name}' and soft_delete=0"
+    displayName(sql,cursor)
 
 
 
