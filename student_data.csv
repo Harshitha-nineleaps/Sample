@@ -1,4 +1,16 @@
-1,Harshitha K,female,Mk Krish,kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk,2002-03-03,+918787878780,science,1,1,maths
+student_id,name,gender,guardian_name,address,date_of_birth,mobile_number,course_name,year,soft_delete,past_course
+1,Harshitha K,female,Krish,kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk,2002-03-03,+918787878780,science,1,1,maths
+student_id,name,gender,guardian_name,address,date_of_birth,mobile_number,course_name,year,soft_delete,past_course
 2,Harshitha,female,MK Kei,jjkjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj,2002-05-04,+918989898989,social,1,1,maths
-3,dk,other,dk father,4 cross 3 main Kadubesanahalli,2001-02-02,+919090909090,science,1,0,science
+student_id,name,gender,guardian_name,address,date_of_birth,mobile_number,course_name,year,soft_delete,past_course
+3,dk,other,dk father,4 cross 3 main Kadubesanahalli,2001-02-02,+919090909090,science,1,1,science
+student_id,name,gender,guardian_name,address,date_of_birth,mobile_number,course_name,year,soft_delete,past_course
 4,Gukesh,male,Domaraju,4th main 5th block Koramangala,2000-09-09,+919090909090,science,1,0,science
+student_id,name,gender,guardian_name,address,date_of_birth,mobile_number,course_name,year,soft_delete,past_course
+5,           kl,female,   kl,Hihole badami 4th cross,2000-09-09,+919090909090,science,3,0,science
+student_id,name,gender,guardian_name,address,date_of_birth,mobile_number,course_name,year,soft_delete,past_course
+6,fghjk,female,hjj jj,dhgjklfddfhkl   dfgjkjhfx,2000-09-09,+919090909090,social,1,0,science
+student_id,name,gender,guardian_name,address,date_of_birth,mobile_number,course_name,year,soft_delete,past_course
+7,fh,female,xfghjhgx,zdfigfdzfdgfdfdgfdfsdfiudsdf dugxxzf,2000-09-09,+919090909090,science,4,0,science
+student_id,name,gender,guardian_name,address,date_of_birth,mobile_number,course_name,year,soft_delete,past_course
+8,jlkkk,female,Harshi,fghjkjhgfddfi fghhgfdxfhj,2002-09-09,+919090909090,science,1,0,science

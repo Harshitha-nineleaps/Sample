@@ -2,6 +2,7 @@ from validation import authenticate_user
 from connection import conn
 from student import *
 from teacher import *
+from mathh import selectQuery
 
 def display_menu():
     print("Menu:")
@@ -28,13 +29,12 @@ def display_menu():
 
 
 def main():
-    # if not authenticate_user():
-    #     print("Authentication failed , User credentials are invalid! 😞")
-    #     return
+    if not authenticate_user():
+        print("Authentication failed , User credentials are invalid! 😞")
+        return
     
     print("Authentication successfull 😄")
     cursor = conn.cursor()
-
     while True:
         choice=display_menu()
         if choice== '0':
@@ -52,6 +52,7 @@ def main():
 
         elif choice == '2':
             student_id = input('Enter student ID: ')
+            if selectQuery("students","student_id",student_id,cursor,"soft_delete",0):continue
             while True:
                 field = input("Enter the field you would like to update: ")
                 if field.strip() not in ('guardian_name', 'address','date_of_birth', 'mobile_number', 'course_name'):
@@ -160,6 +161,7 @@ If you like to filter based on more than 1 field please enter those fields separ
 
         elif choice=='8':
             teacher_id = input('Enter teacher id: ').strip()
+            if selectQuery("teacher","teacher_id",teacher_id,cursor,"soft_delete",0):continue           
             while True:
                 field = input("Enter the field you would like to update: ")
                 if field.strip() not in ( 'address','mobile_number', 'course_name'):

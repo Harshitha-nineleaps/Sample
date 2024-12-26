@@ -1,7 +1,7 @@
 from connection import conn
 from datetime import datetime
-from student import *
 import pandas
+from mathh import *
 
 cursor=conn.cursor()
 
@@ -53,7 +53,7 @@ def teacherDetails():
 
 def teacherFilter(filter_values):
 
-    sql="Select * from teacher where 1 "
+    sql="Select * from teacher where 1 and soft_delete=0 "
     for key , value in filter_values.items():
         if key=="course_name":
             sql+=f"and {key} regexp '{value}'"
@@ -75,7 +75,7 @@ def teacherFilter(filter_values):
 def delete_teacher_record(teacher_id):
 
     try:
-        sql=f'Select date_of_joining from teacher where teacher_id={teacher_id}'
+        sql=f'Select date_of_joining from teacher where teacher_id={teacher_id} and soft_delete=0'
         cursor.execute(sql)
         join_date = cursor.fetchone()
         if join_date is None:
@@ -104,21 +104,16 @@ def delete_teacher_record(teacher_id):
 def teacherPastCourse(teacher_id):
 
     try:
-        sql=f"Select past_course , course_name from teacher where teacher_id={teacher_id}"
+        sql=f"Select past_course  from teacher where teacher_id={teacher_id}"
         cursor.execute(sql)
         result=cursor.fetchone()
-        if result[0]!=result[1] :
-            print(f"Past course of teacher is {result[0]} , teacher has changed the course")
-        else:
-            print(f"Past course of teacher is {result[0]} , teacher has not changed the course")
+        print(f"Past course of teacher is {result[0]}")
     except:
         print('Given teacher_id do not exist')
 
 
 
 def updateTeacherInfo(teacher_id, field , value):
-
-    if selectQuery("teacher","teacher_id",teacher_id,cursor):return
 
     if field=="mobile_number":
         mobile_number = mobileNumberCheck('+91'+value)
@@ -143,15 +138,19 @@ def updateTeacherInfo(teacher_id, field , value):
                 cursor.execute(sql)
                 result=cursor.fetchone()
                 if(result[0]!=counter):
-                    print("One of the course you have entered doesn't exist ")
-                    value=input("Please re-enter courses: ")
+                    print("Error can be because same course is entered more than once or One of the course entered doesn't exist")
+                    value=input("Please re-enter courses:")
                     continue
                 break
+                
             except Exception as e:
                 print(f"An error occured: {e}")
                 break
     try:
-        sql=f"Update teacher set {field}='{value}' where teacher_id={teacher_id}"
+        sql=f"Select course_name from teacher where teacher_id={teacher_id}"
+        cursor.execute(sql)
+        result=cursor.fetchone()
+        sql=f"Update teacher set {field}='{value}', past_course='{result[0]}' where teacher_id={teacher_id}"
         cursor.execute(sql)
         conn.commit()
         print("Update Successfull 🙌")
@@ -160,7 +159,7 @@ def updateTeacherInfo(teacher_id, field , value):
 
 
 def searchTeacherName(teacher_name):
-    sql=f"Select * from teacher where name='{teacher_name}' and soft_delete=0"
+    sql=f"Select * from teacher where name='{teacher_name}'"
     displayName(sql,cursor)
 
 

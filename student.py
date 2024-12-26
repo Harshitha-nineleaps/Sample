@@ -1,59 +1,11 @@
 from connection import conn
 from datetime import datetime
-import re
-from student import *
 import pandas
 import csv
-
-def specialCharacterCheck(field,value):
-    if not value.replace(" ","").isalpha():
-        print(f"Error: {field} should only contain alphabets.")
-        return True
-def mobileNumberCheck(mobile_number):
-    if not re.match(r'^\+91[1-9]{1}[0-9]{9}$', mobile_number):
-        print("Error: Mobile number must be exactly 10 digits and cannot start with 0.")
-        return True
-    return mobile_number
-def dateConversion(date_of_birth):
-    try:
-        date_of_birth = datetime.strptime(date_of_birth, '%d-%m-%Y').date()
-        print(date_of_birth)
-        return date_of_birth
-    except ValueError:
-        print("Error: Date of birth should be in dd-mm-yyyy format.")
-        return True
-def addressLength(address):
-    if(len(address)<20):
-        print("Address must have more than 20 characters")
-        return True
-def selectQuery(table_name,field_name,field_value,cursor):
-    sql=f'Select 1 from {table_name} where {field_name} = %s'
-    try:
-        cursor.execute(sql,(field_value,))
-        result=cursor.fetchone()
-        if result[0]!=1:
-            pass
-    except Exception as e:
-       print(f"Entered {field_name} do not exist")
-       return True
-    
-def displayName(sql,cursor):
-    try:
-        cursor.execute(sql)
-        result=cursor.fetchall()
-        if result:
-            headers=[i[0] for i in cursor.description]
-            print(pandas.DataFrame(result,columns=headers))
-        else:
-            print("No records found 🧐")
-    except Exception as e:
-           print(f'An Exception occured: {e}')
-
+from mathh import *
 
 cursor=conn.cursor()
         
-
-
 def add_student(name, gender, guardian_name, address, date_of_birth, mobile_number, course_name,Year):
 
     if(specialCharacterCheck("name",name)): return
@@ -91,9 +43,6 @@ def add_student(name, gender, guardian_name, address, date_of_birth, mobile_numb
 
 def update_student_info(student_id, field , value):
     
-
-    if selectQuery("students","student_id",student_id,cursor):return
-
     if (field=="guardian_name"):
         if specialCharacterCheck("guardian_name",value):return
     
@@ -171,7 +120,7 @@ def currentCourse(student_id):
 
 def softDelete(student_id):
     try:
-        if(selectQuery("students","student_id",student_id,cursor)):return
+        if(selectQuery("students","student_id",student_id,cursor,"soft_delete",0)):return
         sql=f"Update students set soft_delete=true where student_id={student_id}"
         print(sql)
         cursor.execute(sql)
@@ -198,7 +147,7 @@ def pastCourse(student_id):
 
 def searchStudentName(student_name):
 
-    sql=f"Select * from students where name='{student_name}' and soft_delete=0"
+    sql=f"Select * from students where name='{student_name}'"
     displayName(sql,cursor)
     
 
